@@ -1,39 +1,43 @@
-var Settings = function() {
+var Settings = function(db,view) {
     this.server= "localhost";
     this.port="8080";
     this.username="willian";
     this.password="willian";
+    this.db = db;
+    this.view = view;
 
     this.load = function(callback) {
-         html5rocks.webdb.getConfiguracoes(function(configuracao){
-            if (configuracao)
-            {
+        this.db.getConfiguracoes(function(configuracao){
+            if (configuracao) {
                 this.server = configuracao.SERVIDOR;
                 this.port = configuracao.PORTA;
                 this.username = configuracao.USUARIO;
                 this.password = configuracao.SENHA;
             }
-            if(callback)
+            if(callback){
                 callback(configuracao);
+            }
         })
     };
     this.save = function(callback) {
-        //System.Gadget.Settings.write("SettingsExist", true);
+        viewValues = this.view.getValues();
 
-        this.server 	= txtServer.value;
-        this.port 		= txtPort.value;
-        this.username 	= txtUsername.value;
-        this.password 	= txtPassword.value;
+        this.server 	= viewValues.server;
+        this.port 		= viewValues.port;
+        this.username 	= viewValues.username;
+        this.password 	= viewValues.password;
 
-        html5rocks.webdb.setConfiguracoes({SERVIDOR:currentSettings.server,PORTA:currentSettings.port,USUARIO:currentSettings.username,SENHA:currentSettings.password},callback);
-    }
+        this.db.setConfiguracoes({SERVIDOR:currentSettings.server,PORTA:currentSettings.port,USUARIO:currentSettings.username,SENHA:currentSettings.password},callback);
+    };
     this.loadSettings = function(callback) {
         this.load(function(){
 
-            txtServer.value = this.server;
-            txtPort.value = this.port;
-            txtUsername.value = this.username;
-            txtPassword.value = this.password;
+            this.view.setValues({
+                server : this.server,
+                port : this.port,
+                username : this.username,
+                password : this.password
+            });
             if(callback){
                 callback();
             }
@@ -45,12 +49,24 @@ var Settings = function() {
             this.save();
         }
         event.cancel = false;
-    }
-    this.showCurrent = function() {
-        txtServer.value = this.server;
-        txtPort.value = this.port;
-        txtUusername.value = this.username;
-        txtPassword.value = this.password;
-    }
-}
-var currentSettings = new Settings();
+    };
+};
+
+function View(){
+    this.getValues = function(){
+        return {
+            server : txtServer.value,
+            port : txtPort.value,
+            username : txtUusername.value,
+            password : txtPassword.value
+        }
+    };
+
+    this.setValues = function(dados) {
+        txtServer.value = dados.server;
+        txtPort.value = dados.port;
+        txtUusername.value = dados.username;
+        txtPassword.value = dados.password;
+    };
+};
+var currentSettings = new Settings(html5rocks.webdb,new View());
