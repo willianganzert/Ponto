@@ -1,0 +1,165 @@
+<html>
+    <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<script id="jquery_script" type="text/javascript" src="js/jquery-1.9.1.js"></script>
+	<link href="css/style.css" rel="stylesheet" type="text/css" />
+	<script type="text/javascript" src="js/webDB-remote.js"></script>
+<!---->
+	<script type="text/javascript" src="js/settings.js"></script>
+<!---->
+	<script type="text/javascript" src="js/marcacoes-popup.js"></script>
+<!---->
+    </head>
+	
+	<!--<script src="http://code.jquery.com/jquery-latest.min.js"></script>-->
+	<style type="text/css">
+		.topic {
+		  /*margin-bottom: 1.5em; */
+		  background: white;
+		  overflow: hidden;
+			text-align: left;
+		  border-radius: 9px;
+		  box-shadow: 3px 3px 9px #999;
+		  -webkit-border-radius: 9px;
+		  -webkit-box-shadow: 3px 3px 9px #999;
+		  -moz-border-radius: 9px;
+		  -moz-box-shadow: 3px 3px 9px #999;
+			background-color: rgba(255, 255, 255, 0.7);
+		}
+
+		.topic h2 {
+		  position: relative;
+		  padding: 0.4em 16px 0.3em 16px;
+		  font-size: 1.25em;
+			line-height: 1.5em;
+		  font-weight: bold;
+		  color: rgb(69, 92, 113);
+		  background-color: rgba(255, 255, 255, 0.3);
+			border-bottom: 2px solid rgba(0, 0, 0, 0.2);
+		  text-shadow: white 2px 2px 4px;
+		  -webkit-border-top-right-radius: 9px;
+		  -webkit-border-top-left-radius: 9px;
+		  -moz-border-top-right-radius: 9px;
+		  -moz-border-top-left-radius: 9px;
+		  border-top-right-radius: 9px;
+		  border-top-left-radius: 9px;
+		}
+		
+	</style>
+    <script type="text/javascript" src="js/segment-display.js"></script>
+	<script type="text/javascript" src="js/segment-display-ponto.js"></script>
+    
+    
+    <body dir="ltr" scroll="no" unselectable="on">
+		<div class="content">
+		  <div class="topic" style="background-color: rgb(36, 30, 30); border: 3px solid #999; width: 300px; height: 188px;">
+			<div style="padding-left:20px">
+			  <canvas id="display" width="260" height="90"></canvas>
+			</div>
+			<div style="padding-left:20px">
+			  <canvas id="display2" width="260" height="90"></canvas>
+			</div>
+		  </div>
+		  <div class="topic" style="background-color: rgb(36, 30, 30); border: 3px solid #999; width: 280px; padding:10px;">
+			<div class="buttons button-nova-marcacao" style="float:left;width:50px;height:20px;">
+			  <p>+Marca</P>
+			</div>	
+			<div class="buttons button-lista-marcacoes">
+			  <img alt="Lista de marcações" src="data:image/png;base64,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" />
+			</div>
+			<div class="buttons button-config" style="float:right;width:20px;height:20px;">
+			  <img alt="Configurações" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABMAAAATCAYAAAByUDbMAAAACXBIWXMAABJ0AAASdAHeZh94AAAKT2lDQ1BQaG90b3Nob3AgSUNDIHByb2ZpbGUAAHjanVNnVFPpFj333vRCS4iAlEtvUhUIIFJCi4AUkSYqIQkQSoghodkVUcERRUUEG8igiAOOjoCMFVEsDIoK2AfkIaKOg6OIisr74Xuja9a89+bN/rXXPues852zzwfACAyWSDNRNYAMqUIeEeCDx8TG4eQuQIEKJHAAEAizZCFz/SMBAPh+PDwrIsAHvgABeNMLCADATZvAMByH/w/qQplcAYCEAcB0kThLCIAUAEB6jkKmAEBGAYCdmCZTAKAEAGDLY2LjAFAtAGAnf+bTAICd+Jl7AQBblCEVAaCRACATZYhEAGg7AKzPVopFAFgwABRmS8Q5ANgtADBJV2ZIALC3AMDOEAuyAAgMADBRiIUpAAR7AGDIIyN4AISZABRG8lc88SuuEOcqAAB4mbI8uSQ5RYFbCC1xB1dXLh4ozkkXKxQ2YQJhmkAuwnmZGTKBNA/g88wAAKCRFRHgg/P9eM4Ors7ONo62Dl8t6r8G/yJiYuP+5c+rcEAAAOF0ftH+LC+zGoA7BoBt/qIl7gRoXgugdfeLZrIPQLUAoOnaV/Nw+H48PEWhkLnZ2eXk5NhKxEJbYcpXff5nwl/AV/1s+X48/Pf14L7iJIEyXYFHBPjgwsz0TKUcz5IJhGLc5o9H/LcL//wd0yLESWK5WCoU41EScY5EmozzMqUiiUKSKcUl0v9k4t8s+wM+3zUAsGo+AXuRLahdYwP2SycQWHTA4vcAAPK7b8HUKAgDgGiD4c93/+8//UegJQCAZkmScQAAXkQkLlTKsz/HCAAARKCBKrBBG/TBGCzABhzBBdzBC/xgNoRCJMTCQhBCCmSAHHJgKayCQiiGzbAdKmAv1EAdNMBRaIaTcA4uwlW4Dj1wD/phCJ7BKLyBCQRByAgTYSHaiAFiilgjjggXmYX4IcFIBBKLJCDJiBRRIkuRNUgxUopUIFVIHfI9cgI5h1xGupE7yAAygvyGvEcxlIGyUT3UDLVDuag3GoRGogvQZHQxmo8WoJvQcrQaPYw2oefQq2gP2o8+Q8cwwOgYBzPEbDAuxsNCsTgsCZNjy7EirAyrxhqwVqwDu4n1Y8+xdwQSgUXACTYEd0IgYR5BSFhMWE7YSKggHCQ0EdoJNwkDhFHCJyKTqEu0JroR+cQYYjIxh1hILCPWEo8TLxB7iEPENyQSiUMyJ7mQAkmxpFTSEtJG0m5SI+ksqZs0SBojk8naZGuyBzmULCAryIXkneTD5DPkG+Qh8lsKnWJAcaT4U+IoUspqShnlEOU05QZlmDJBVaOaUt2ooVQRNY9aQq2htlKvUYeoEzR1mjnNgxZJS6WtopXTGmgXaPdpr+h0uhHdlR5Ol9BX0svpR+iX6AP0dwwNhhWDx4hnKBmbGAcYZxl3GK+YTKYZ04sZx1QwNzHrmOeZD5lvVVgqtip8FZHKCpVKlSaVGyovVKmqpqreqgtV81XLVI+pXlN9rkZVM1PjqQnUlqtVqp1Q61MbU2epO6iHqmeob1Q/pH5Z/YkGWcNMw09DpFGgsV/jvMYgC2MZs3gsIWsNq4Z1gTXEJrHN2Xx2KruY/R27iz2qqaE5QzNKM1ezUvOUZj8H45hx+Jx0TgnnKKeX836K3hTvKeIpG6Y0TLkxZVxrqpaXllirSKtRq0frvTau7aedpr1Fu1n7gQ5Bx0onXCdHZ4/OBZ3nU9lT3acKpxZNPTr1ri6qa6UbobtEd79up+6Ynr5egJ5Mb6feeb3n+hx9L/1U/W36p/VHDFgGswwkBtsMzhg8xTVxbzwdL8fb8VFDXcNAQ6VhlWGX4YSRudE8o9VGjUYPjGnGXOMk423GbcajJgYmISZLTepN7ppSTbmmKaY7TDtMx83MzaLN1pk1mz0x1zLnm+eb15vft2BaeFostqi2uGVJsuRaplnutrxuhVo5WaVYVVpds0atna0l1rutu6cRp7lOk06rntZnw7Dxtsm2qbcZsOXYBtuutm22fWFnYhdnt8Wuw+6TvZN9un2N/T0HDYfZDqsdWh1+c7RyFDpWOt6azpzuP33F9JbpL2dYzxDP2DPjthPLKcRpnVOb00dnF2e5c4PziIuJS4LLLpc+Lpsbxt3IveRKdPVxXeF60vWdm7Obwu2o26/uNu5p7ofcn8w0nymeWTNz0MPIQ+BR5dE/C5+VMGvfrH5PQ0+BZ7XnIy9jL5FXrdewt6V3qvdh7xc+9j5yn+M+4zw33jLeWV/MN8C3yLfLT8Nvnl+F30N/I/9k/3r/0QCngCUBZwOJgUGBWwL7+Hp8Ib+OPzrbZfay2e1BjKC5QRVBj4KtguXBrSFoyOyQrSH355jOkc5pDoVQfujW0Adh5mGLw34MJ4WHhVeGP45wiFga0TGXNXfR3ENz30T6RJZE3ptnMU85ry1KNSo+qi5qPNo3ujS6P8YuZlnM1VidWElsSxw5LiquNm5svt/87fOH4p3iC+N7F5gvyF1weaHOwvSFpxapLhIsOpZATIhOOJTwQRAqqBaMJfITdyWOCnnCHcJnIi/RNtGI2ENcKh5O8kgqTXqS7JG8NXkkxTOlLOW5hCepkLxMDUzdmzqeFpp2IG0yPTq9MYOSkZBxQqohTZO2Z+pn5mZ2y6xlhbL+xW6Lty8elQfJa7OQrAVZLQq2QqboVFoo1yoHsmdlV2a/zYnKOZarnivN7cyzytuQN5zvn//tEsIS4ZK2pYZLVy0dWOa9rGo5sjxxedsK4xUFK4ZWBqw8uIq2Km3VT6vtV5eufr0mek1rgV7ByoLBtQFr6wtVCuWFfevc1+1dT1gvWd+1YfqGnRs+FYmKrhTbF5cVf9go3HjlG4dvyr+Z3JS0qavEuWTPZtJm6ebeLZ5bDpaql+aXDm4N2dq0Dd9WtO319kXbL5fNKNu7g7ZDuaO/PLi8ZafJzs07P1SkVPRU+lQ27tLdtWHX+G7R7ht7vPY07NXbW7z3/T7JvttVAVVN1WbVZftJ+7P3P66Jqun4lvttXa1ObXHtxwPSA/0HIw6217nU1R3SPVRSj9Yr60cOxx++/p3vdy0NNg1VjZzG4iNwRHnk6fcJ3/ceDTradox7rOEH0x92HWcdL2pCmvKaRptTmvtbYlu6T8w+0dbq3nr8R9sfD5w0PFl5SvNUyWna6YLTk2fyz4ydlZ19fi753GDborZ752PO32oPb++6EHTh0kX/i+c7vDvOXPK4dPKy2+UTV7hXmq86X23qdOo8/pPTT8e7nLuarrlca7nuer21e2b36RueN87d9L158Rb/1tWeOT3dvfN6b/fF9/XfFt1+cif9zsu72Xcn7q28T7xf9EDtQdlD3YfVP1v+3Njv3H9qwHeg89HcR/cGhYPP/pH1jw9DBY+Zj8uGDYbrnjg+OTniP3L96fynQ89kzyaeF/6i/suuFxYvfvjV69fO0ZjRoZfyl5O/bXyl/erA6xmv28bCxh6+yXgzMV70VvvtwXfcdx3vo98PT+R8IH8o/2j5sfVT0Kf7kxmTk/8EA5jz/GMzLdsAAAAgY0hSTQAAeiUAAICDAAD5/wAAgOkAAHUwAADqYAAAOpgAABdvkl/FRgAAAWNJREFUeNpi/P//PwO1ABMDFQFRhv17dlnv+0z//1/KhP9/67M9zPDnFxtWhf///8eLfx2alvUpj+3npyyG/19adC//+/xKDJdavAb9fXpJj1iD/v//j9+bPzfXNMO8xCxnfIaRR/QVqv//svza21dEVJj9e3LBAMb+c35NCMPv71zI8r/2dJf82tXRS3Js/v/5hefPpU1+MP7fB6fMfm6tb0RWw4gvnX2f6b8R2QBsgEXLg4EzezsjXpf9vXvE5u/NfU6EXMzmUuoMNxiXQd8mu+1m+P2dA3cKZf7H7t9eyazutA+nYVgNYmH7xaLlsePfkwsG///9ZWGWMz7D5l7dyqxgdgrFyygG3T7o8G2q53Z0gziTV4ey6PltIjo7UWoQPDZxeY0Ug+CGfc5mhKUPRgYGhv/kGAT3JpOwIjxtkmsQPAL+vb3PyCgg/Z/h318Gjug5wSw63lvIKc8YqVnSAgYA/kMOUgABCJoAAAAASUVORK5CYII=" />
+			</div>
+			<div class="div-marcacoes border-simple-orange esconde">
+				<table class="marcacoes">
+					<thead>
+						<tr>
+							<th>
+								<div style="float:left;padding-left:2px;">
+									<p>Marcações</p>
+								</div>
+								<div class="slim-button button-marcacao-mais esconde" style="right:5px;float:right;width:50px;height:15px;">
+									<p> Mais...</P>
+								</div>
+							</th>
+						</tr>
+					</thead>
+					<tfoot>
+						<tr>
+						</tr>
+					</tfoot>
+					<tbody>						
+					</tbody>
+				</table>
+			</div>
+		  </div>
+		</div>
+		
+		
+		<div class="configuracoes esconde" >
+			<table cellspacing="0" cellpadding="0" style="width:100%;height:100%;font-size:12px">
+				<thead>
+					<tr>
+						<th colspan="2" class="head_config"><p>Configurações</p></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr style="height:25px;">
+						<td style="width: 60px;"><label for="txtServer">Servidor</label></td>
+						<td><input id="txtServer" type="text" class="textbox" style="width:100%;font-size:12px" maxlength="30"></td>
+					</tr>
+					<tr style="height:25px;">
+						<td style="width: 60px;"><label for="txtPort">Porta</label></td>
+						<td><input id="txtPort" type="text" class="textbox" style="width:100%;font-size:12px" maxlength="30"></td>
+					</tr>
+					<tr style="height:25px;">
+						<td style="width: 60px;"><label for="txtUsername">Usuário</label></td>
+						<td><input id="txtUsername" type="text" class="textbox" style="width:100%;font-size:12px" maxlength="30"></td>
+					</tr style="height:25px;">
+					<tr style="height:25px;">
+						<td><label for="txtPassword">Senha</label></td>
+						<td><input id="txtPassword" type="password" class="textbox" style="width:100%;font-size:12px" maxlength="30"></td>
+					</tr>
+					<tr>
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+					  <td></td>
+					  <td>
+							<input id="ok_config" type="button" value="OK" style="width:50px;float:right;right:20px;" />
+							<input id="cancelar_config" type="button" value="Cancelar" style="width:70px;float:right;right:20px;" />
+					  </td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+		<div class="nova-marcacao esconde" >
+			<table cellspacing="0" cellpadding="0" style="width:100%;height:100%;font-size:12px">
+				<thead>
+					<tr>
+						<th colspan="2" class="head_marca"><p>Nova Marcação</p></th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr style="height:25px;">
+						<td style="width: 60px;"><label for="txtServer">Horário</label></td>
+						<td><input id="horario_nova_marca" type="time" class="textbox" style="width:100%;font-size:12px" maxlength="30"></input></td>
+					</tr>					
+					<tr>
+						
+					</tr>
+				</tbody>
+				<tfoot>
+					<tr>
+					  <td></td>
+					  <td>
+							<input id="ok_marca" type="button" value="OK" style="width:50px;float:right;right:20px;" />
+							<input id="cancelar_marca" type="button" value="Cancelar" style="width:70px;float:right;right:70px;" />
+					  </td>
+					</tr>
+				</tfoot>
+			</table>
+		</div>
+    </body>
+</html>
