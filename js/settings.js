@@ -32,7 +32,7 @@ var Settings = function(db,view) {
     this.loadSettings = function(callback) {
         this.load(function(){
 
-            this.view.setValues({
+            view.setValues({
                 server : this.server,
                 port : this.port,
                 username : this.username,
@@ -50,23 +50,29 @@ var Settings = function(db,view) {
         }
         event.cancel = false;
     };
+    return this;
 };
 
-function View(){
+function View(id){
+    this.id = id;
     this.getValues = function(){
         return {
-            server : txtServer.value,
-            port : txtPort.value,
-            username : txtUusername.value,
-            password : txtPassword.value
+            server : $("#"+this.id+" #txtServer").val(),
+            port : $("#"+this.id+" #txtPort").val(),
+            username : $("#"+this.id+" #txtUsername").val(),
+            password : $("#"+this.id+" #txtPassword").val()
         }
     };
 
     this.setValues = function(dados) {
-        txtServer.value = dados.server;
-        txtPort.value = dados.port;
-        txtUusername.value = dados.username;
-        txtPassword.value = dados.password;
+        $("#"+this.id+" #txtServer").val(dados.server);
+        $("#"+this.id+" #txtPort").val(dados.port);
+        $("#"+this.id+" #txtUsername").val(dados.username);
+        $("#"+this.id+" #txtPassword").val(dados.password);
     };
+    this.requestSettings = function(){
+        $("#"+this.id).removeClass("esconde");
+    }
+    return this;
 };
-var currentSettings = new Settings(html5rocks.webdb,new View());
+var currentSettings = new Settings(html5rocks.webdb,new View("configuracoes"));
