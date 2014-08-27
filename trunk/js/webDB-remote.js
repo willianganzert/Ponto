@@ -23,9 +23,10 @@ html5rocks.webdb.setConfiguracoes = function(configuracoes,callback) {
 }
 html5rocks.webdb.getConfiguracoes = function(callback) {
     sendMessage({type:"db", method:"getConfiguracoes",param:[] },function(promise){
-        setTimeout(function(){
+        callLater({type:"db", method:"getPromise",param:[promise],callback:callback});
+        /*setTimeout(function(){
             sendMessage({type:"db", method:"getPromise",param:[promise]},callback);
-        },500)
+        },500)*/
     });
 }
 html5rocks.webdb.getMarca = function(marca, callback) {
@@ -90,4 +91,10 @@ sql = function(sqlE,params){
 function initDB() {
   html5rocks.webdb.open();
   html5rocks.webdb.createTable();
+}
+
+function callLater(message){
+    setTimeout(function(){
+        sendMessage(message,message.callback);
+    },500);
 }
