@@ -14,7 +14,7 @@ function convertSecondsToHours(seconds){
     retHours 	= parseInt((seconds/60)/60);
     retMinutes 	= parseInt((seconds/60)%60);
     retSeconds 	= parseInt(seconds%60);
-    if(horaSegundo)
+    if(horaMinutoSegundo)
         return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2) + ":" + zeroEsquerda(retSeconds, 2);
     else
         return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2);
@@ -24,7 +24,7 @@ function convertMinuteToHours(minutes){
     if(negativo) minutes = minutes*-1;
     retHours 	= minutes%60;
     retMinutes 	= parseInt(minutes%60);
-    if(horaSegundo)
+    if(horaMinutoSegundo)
         return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2) + ":" + zeroEsquerda(0, 2);
     else
         return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2);

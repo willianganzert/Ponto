@@ -46,8 +46,13 @@ html5rocks.webdb.getMarcacoesDia = function(marcacoesDia,callback) {
     });
 }
 
-html5rocks.webdb.insertMarca = function(marca) {
-	sendMessage({type:"db", method:"insertMarca",param:[marca] });
+html5rocks.webdb.insertMarca = function(marca,callback) {
+    sendMessage({type:"db", method:"insertMarca",param:[marca] },function(promise){
+        setTimeout(function(){
+            sendMessage({type:"db", method:"getPromise",param:[promise]},callback);
+        },500)
+    });
+//	sendMessage({type:"db", method:"insertMarca",param:[marca] });
 }
 
 html5rocks.webdb.deleteMarcacoes = function() {
