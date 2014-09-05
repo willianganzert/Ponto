@@ -60,8 +60,6 @@ var PontoDia = function(dia) {
     this.horasTrabalhadas = "08:09:00";//somente para consulta
 //    this.horarioSaida = {pontoDia: this, toString : function () {return convertSecondsToHours(convertHoursToSeconds(new Date(new Date().setSeconds(0))) + convertHoursToSeconds(this.pontoDia.horasFaltantes))}};
     this.horarioSaida = this.horasFaltantes;
-
-    this.horaSegundo = true;
     this.marcacoesDia = new Array();
     this.inserindoMarca	= false;
     this.horaExtra = true;
