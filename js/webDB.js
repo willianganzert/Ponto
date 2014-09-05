@@ -36,6 +36,11 @@ html5rocks.webdb.setConfiguracoes = function(configuracoes,callback) {
    });
 }
 html5rocks.webdb.getConfiguracoes = function(callback) {
+    if(callback){
+        if(typeof callback.callback  == "function")
+            callback = callback.callback;
+    }
+
   var db = html5rocks.webdb.db;
   db.transaction(function(tx) {
     tx.executeSql("SELECT ID, SERVIDOR,PORTA ,USUARIO ,SENHA FROM CONFIGURACOES", [], function(tx, rs){

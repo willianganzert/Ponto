@@ -1,24 +1,27 @@
 var Settings = function(db,view) {
-    this.server= "localhost";
-    this.port="8080";
-    this.username="willian";
-    this.password="willian";
+    this.server= "";
+    this.port="";
+    this.username="";
+    this.password="";
     this.db = db;
     this.view = view;
 
     this.load = function(callback) {
+        var context = this;
         this.db.getConfiguracoes(function(configuracao){
-            if (configuracao) {
-                this.server = configuracao.SERVIDOR;
-                this.port = configuracao.PORTA;
-                this.username = configuracao.USUARIO;
-                this.password = configuracao.SENHA;
-            }
-            if(callback){
-                callback(configuracao);
-            }
-        })
+            context.setLoadedValues(configuracao);
+            if(typeof callback == "function")
+                callback.apply(context);
+        });
     };
+    this.setLoadedValues = function(configuracao){
+        if (configuracao) {
+            this.server = configuracao.SERVIDOR;
+            this.port = configuracao.PORTA;
+            this.username = configuracao.USUARIO;
+            this.password = configuracao.SENHA;
+        }
+    }
     this.save = function(callback) {
         viewValues = this.view.getValues();
 
