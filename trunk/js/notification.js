@@ -1,25 +1,33 @@
-function showNotification(notification,callback) {
-    var notification;
-    if(notification.notificationType == undefined || notification.notificationType == "default"){
-        notification = new Notification(
-            notification.title,{
-                icon: 'img/icon_48.png',
-                body: notification.message
-            }
-        );
-    }else if(notification.notificationType == "html"){
-        //
-    }
-    callback("ss");
+var Notificator = function(defaultNotificationDetails) {
+    this.defaultNotification = {type: 'default', image:'img/icon_48.png',title:'Nota', message:"Default Message"};
+    if(defaultNotificationDetails)
+        $.extend(this.defaultNotification,defaultNotificationDetails);
+    this.showNotification = function(notificationDetailsUser,callback) {
+        var notificationDetails = this.defaultNotification;
+        $.extend(notificationDetails,notificationDetailsUser);
+        var notification = null;
+        if(notificationDetails.type == "default"){
+            notification = new Notification(
+                notificationDetails.title,{
+                    icon: notificationDetails.image,
+                    body: notificationDetails.message
+                }
+            );
+        }else if(notificationDetails.type == "html"){
+            //
+            throw "Tipo de notificação não implementado. ["+notification.type+"]";
+        }
+        else {
+            throw "Tipo de notificação desconhecido. ["+notification.type+"]";
+        }
+        if(typeof callback == "function")
+            callback();
+        return notification;
+    };
+    this.showDefaultNotification = function(message,callback){
+        this.showNotification({type: this.defaultNotification.type, image:this.defaultNotification.image,title:this.defaultNotification.title, message:message},callback);
+    };
+    return this;
 }
-// Then show the notification.
-function showMarcacoes(rowOutput){
-    showNotification({type:"message",image:'img/icon_48.png',title:'Marcações', message:toStringMarcacoes(rowOutput)});
-}
-function toStringMarcacoes(rowOutput){
-    var s = "";
-    for(var i = 0; i<rowOutput.length;i++){
-        s += "\n" + zeroEsquerda(rowOutput[i].hora,2) + ":" + zeroEsquerda(rowOutput[i].minuto,2);
-    }
-    return s;
-}
+
+var currentNotificator = new Notificator();
