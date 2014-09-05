@@ -1,17 +1,17 @@
-﻿var timeOffset = 0;
-var _6h = 21600;
+﻿var dbug = true;
 var horasdiarias = "08:30:00";
 var horasFaltantes = horasdiarias;
 var horarioSaida = "18:00:00";
 var horasTrabalhadas = "00:00:00";//somente para consulta
 var tempoAlmoco = "01:30:00";
-var horaSegundo = true;
+var horaMinutoSegundo = true;
 var marcacoesDia = new Array();
-var configurando 	= false;
-var inserindoMarca	= false;
 var horaExtra = true;
 var horaExtra2 = true;
 var intervalAjaxReference = null;
+var notificadoHoraSaida = [];
+
+
 var marcacoes = {
     getInformacoesPonto : function(diaSelecionado, callback){
         console.log("DIA SELECIONADO");
@@ -25,36 +25,17 @@ var marcacoes = {
         return returnDia;
     }
 }
-$(function(){
-	typeof initDB == "function"?initDB():null;		
 
-	$("#ok_config").click(function(){
-		fechaConfiguracao(true);
-	});
-	$("#cancelar_config").click(function(){
-		fechaConfiguracao(false);
-	});
-	
-	$("#ok_marca").click(function(){
-		fechaNovaMarca(true);		
-	});
-	$("#cancelar_marca").click(function(){		
-		fechaNovaMarca(false);
-	});
-	
-	$(".button-config").click(abreConfiguracao);
-	
-	$(".button-lista-marcacoes").click(function(){
-		$(".div-marcacoes").removeClass("esconde");
-		$(".button-lista-marcacoes").addClass("esconde");
-	});
-	
-	
-	$(".button-nova-marcacao").click(abreNovaMarca);
-	
+$(function () {
+	typeof initDB == "function"?initDB():null;
+
+    setInterval(calculaHorarios,1000);
+    
 	currentSettings.load(function(){
+        if(dbug){
+            html5rocks.webdb.deleteMarcacoesUser({user:currentSettings.username});
+        }
         loadPage();
-        setInterval(function(){calculaHorarios();typeof animate == 'function'?animate():null;},1000);
     });
 
 	window.getTime = function(){
@@ -70,55 +51,19 @@ $(function(){
 	window.isHoraExtra2 = function(){
 		return horaExtra2;
 	}
-	
-	$("#horario_nova_marca").keydown(function(event) {
-        if (event.keyCode == 13 ){
-			insereMarca();
-        }
-    });
-	$("body").keydown(function(event) {
-		if ((event.which == 107 || event.which == 187 ) && !configurando && !inserindoMarca) {
-			abreNovaMarca();
-		}			
-	});
 });
 
-function abreConfiguracao(){
-	configurando = true;
-	$(".configuracoes").removeClass("esconde");
-	loadSettings(function(){$("#txtUsername").select();});
-}
-function fechaConfiguracao(ok){
-	configurando = false;
-	if(ok)
-		currentSettings.save(function(){window.location.reload();});
-	$(".configuracoes").addClass("esconde");
-}
-function abreNovaMarca(){
-	inserindoMarca = true;
-	now = /(..)(:..)(:..)/.exec(new Date());
-	$("#horario_nova_marca").attr("value",now[0]);
-	$(".nova-marcacao").removeClass("esconde");		
-	$('#horario_nova_marca').focus();
-}
-function fechaNovaMarca(ok){
-	inserindoMarca = false;
-	if(ok)
-		insereMarca();
-	$(".nova-marcacao").addClass("esconde");
-}
 
 function insereMarca(){
 	console.log($("#horario_nova_marca").val());
 	now = new Date();
 	html5rocks.webdb.insertMarca({user:currentSettings.username,dataHora:new Date((now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + " " +$("#horario_nova_marca").val()).getTime()});
-	setTimeout(carregaMarcacoes,1000);
+
 }
 function loadPage() {
-	if(!currentSettings.username) {
-		$(".configuracoes").removeClass("esconde");
-	} else {
-		carregaMarcacoes();
+    if(currentSettings.username) {
+        setInterval(carregaMarcacoes,1000);
+
 		if(intervalAjaxReference != null){
 			clearInterval(intervalAjaxReference);
 			intervalAjaxReference = null
@@ -126,13 +71,27 @@ function loadPage() {
 		consultaPonto();
 		intervalAjaxReference = setInterval(consultaPonto,60000);//600000
 	}
+    else{
+        setTimeout(loadPage,5000);
+    }
 }
 
-function consultaPonto() {
+function fakeRequestPonto(){
 	//processSuccess(null, "success", {responseText:"<batidas><clock><hour>08</hour><minute>30</minute></clock><clock><hour>11</hour><minute>45</minute></clock><clock><hour>12</hour><minute>50</minute></clock></batidas>"})
-	processSuccess(null, "success", {responseText:"<batidas><clock><hour>08</hour><minute>30</minute></clock><clock><hour>11</hour><minute>45</minute></clock><clock><hour>12</hour><minute>50</minute></clock><clock><hour>18</hour><minute>30</minute></clock><clock><hour>18</hour><minute>40</minute></clock><clock><hour>18</hour><minute>50</minute></clock></batidas>"})
+//	processSuccess(null, "success", {responseText:"<batidas><clock><hour>08</hour><minute>30</minute></clock><clock><hour>11</hour><minute>45</minute></clock><clock><hour>12</hour><minute>50</minute></clock><clock><hour>18</hour><minute>30</minute></clock><clock><hour>18</hour><minute>40</minute></clock><clock><hour>18</hour><minute>50</minute></clock></batidas>"})
+//    08:00 - 12:00 - 13:30
+    processSuccess(null, "success", {responseText:"<batidas><clock><hour>08</hour><minute>00</minute></clock><clock><hour>12</hour><minute>00</minute></clock><clock><hour>13</hour><minute>30</minute></clock></batidas>"})
+
 }
-function consultaPonto2() {
+function consultaPonto() {
+    if(dbug){
+        fakeRequestPonto();
+    }
+    else{
+        requestPontoWS
+    }
+}
+function requestPontoWS() {
 	//showNotification({type:"notification", title:"Consultando Ponto", message:""}, function(response) {console.log(response.result);});
 	var wsUrl = "https://" + currentSettings.server + ":" + currentSettings.port + "/ConsultaPontoWS/ConsultaPonto";
 
@@ -180,7 +139,6 @@ function gravaMarcacoes(horarios){
 	for(var i = 0;i<horarios.length;i++){
 		html5rocks.webdb.insertMarca({user:currentSettings.username,dataHora:horarios[i].getTime(),obs:""});
 	}
-	setTimeout(carregaMarcacoes,1000);
 }
 function carregaMarcacoes(){
 	html5rocks.webdb.getMarcacoesDia({user:currentSettings.username,data:new Date().getTime()},
@@ -189,10 +147,6 @@ function carregaMarcacoes(){
                 return ((a.hora*60)+a.minuto)-((b.hora*60)+b.minuto)}
             );
             marcacoesDia = list;
-            $(".marcacoes tbody").empty();
-            for(var i =0;i<list.length;i++){
-                $(".marcacoes tbody").append("<tr><td>"+list[i].dia+"/"+list[i].mes+"/"+list[i].ano+" - "+zeroEsquerda(list[i].hora,2)+":"+zeroEsquerda(list[i].minuto,2));
-            }
         }
     );
 }
@@ -210,6 +164,13 @@ function calculaHorarios(){
 	}
 	
 	var segundosFaltantes = segundosDiarios - segundosTrabalhados;
+    if(segundosFaltantes < 300){
+        var dia = now.getDate()+"-"+now.getMonth()+"-"+now.getFullYear();
+        if(!notificadoHoraSaida[dia] || !notificadoHoraSaida[dia].notificado){
+            currentSchedule.addEvent(new EventSchedule("notificaHoraSaida",{trigger:function(){return true},message:{title:"HORARIO DE SAÍDA", message: "Faltam menos de 5 minutos para registrar seu ponto, organize-se!"}}))
+            notificadoHoraSaida[dia] = {notificado:true};
+        }
+    }
 	horasFaltantes = convertSecondsToHours(segundosFaltantes);
 	var segundosSaida = convertHoursToSeconds(now) + segundosFaltantes + (marcacoesDia.length<3?convertHoursToSeconds(tempoAlmoco):0);
 	horarioSaida = convertSecondsToHours(segundosSaida > 86400?segundosSaida-86400:segundosSaida);
@@ -239,44 +200,6 @@ function calculaHorarios(){
 	*/
 	
 }
-function convertSecondsToHours(seconds){
-	negativo = seconds < 0;
-	if(negativo) seconds = seconds*-1;
-	retHours 	= parseInt((seconds/60)/60);
-	retMinutes 	= parseInt((seconds/60)%60);
-	retSeconds 	= parseInt(seconds%60);
-	if(horaSegundo)
-		return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2) + ":" + zeroEsquerda(retSeconds, 2);
-	else
-		return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2);
-}
-function convertMinuteToHours(minutes){
-	negativo = minutes < 0;
-	if(negativo) minutes = minutes*-1;
-	retHours 	= minutes%60;
-	retMinutes 	= parseInt(minutes%60);
-	if(horaSegundo)
-		return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2) + ":" + zeroEsquerda(0, 2);
-	else
-		return (negativo?"":"") + zeroEsquerda(retHours, 2) + ":" + zeroEsquerda(retMinutes, 2);
-}
-function convertHoursToSeconds(hour){
-	if(typeof hour == "string"){
-		var hourMinuteSeg = hour.split(":")
-		return ((hourMinuteSeg[0]*60)+hourMinuteSeg[1]*1)*60+(hourMinuteSeg.length>2?hourMinuteSeg[2]*1:0);
-	}
-	else if(hour instanceof Date){
-		return ((hour.getHours()*60)+hour.getMinutes())*60+(hour.getSeconds());
-	}
-	else{
-		return ((hour.hora*60)+hour.minuto)*60;
-	}
-}
-function zeroEsquerda(str, length) {
-	str +="";
-	while(str.length < length)str="0"+str;
-	return str;
-}
 
 
 function processError(data, status, req) {
@@ -289,20 +212,8 @@ function makeXmlLogin() {
 function makeXmlDate(date) {
 	return "<day>" + date.getDate() + "</day><month>" + (date.getMonth()+1) + "</month><year>" + date.getFullYear() + "</year>";
 }
-function showNotificationEx(){
-	showNotification({type:"notification", title: "NOTIFICATION", message: "Exemplo"}, function(response) {
-	  console.log(response);
-	});
-}
-function showNotificationMarcacoes(){
-	showNotification({type:"message",messageType:"showMarcacoes",user: currentSettings.username, data: (new Date()).getTime()}, function(response) {
-	  console.log(response);
-	});
-}
 
-function showNotification(request, callback){
-	sendMessage(request, callback);
-}
+
 function sendMessage(request, callback){
     chrome.runtime.sendMessage(chrome.app.getDetails().id,request, callback);
 }
