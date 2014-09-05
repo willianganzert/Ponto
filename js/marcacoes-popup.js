@@ -1,18 +1,16 @@
-﻿var timeOffset = 0;
-var _6h = 21600;
-var horasdiarias = "08:30:00";
+﻿var horasdiarias = "08:30:00";
 var horasFaltantes = horasdiarias;
 var horarioSaida = "18:00:00";
 var horasTrabalhadas = "00:00:00";//somente para consulta
 var tempoAlmoco = "01:30:00";
-var horaSegundo = true;
+var horaMinutoSegundo = true;
 var marcacoesDia = new Array();
 var configurando 	= false;
 var inserindoMarca	= false;
 var horaExtra = true;
 var horaExtra2 = true;
 
-var currentPonto = new Ponto("ponto",new SegmentDisplayPonto());
+var currentPonto = new Ponto("ponto", new ViewDisplayPonto("view_display_ponto"));
 
 $(function(){
 	$("#ok_config").click(function(){
@@ -31,19 +29,16 @@ $(function(){
 	
 	$(".button-config").click(abreConfiguracao);
 	
-	$(".button-lista-marcacoes").click(function(){
-		$(".div-marcacoes").removeClass("esconde");
-		$(".button-lista-marcacoes").addClass("esconde");
-	});
+	$(".button-lista-marcacoes").click(getMarcacoes);
 	
 	
 	$(".button-nova-marcacao").click(abreNovaMarca);
-	
-	currentSettings.load(function(aaa){
-        if(aaa){
+
+	currentSettings.load(function(){
+        if(this.username){
             atualizaInformacoes();
             setInterval(atualizaInformacoes,1000);
-            setInterval(function(){typeof animate == 'function'?animate():null;},1000);
+//            setInterval(function(){typeof animate == 'function'?animate():null;},1000);
         }
         else{
             console.log("SEM CONFIGURACOES");
@@ -79,6 +74,14 @@ $(function(){
     currentPonto.init();
 });
 
+function getMarcacoes(){
+    currentSettings.db.getMarcacoesDia({user:currentSettings.username,data:new Date().getTime()},function(list){
+        currentPonto.visualinterface.showMarcacoes(list);
+        $(".div-marcacoes").removeClass("esconde");
+        $(".button-lista-marcacoes").addClass("esconde");
+
+    })
+}
 function abreConfiguracao(){
     currentSettings.configurando = true;
 	$(".configuracoes").removeClass("esconde");
@@ -99,28 +102,19 @@ function abreNovaMarca(){
 }
 function fechaNovaMarca(ok){
     currentSettings.inserindoMarca = false;
-	if(ok)
-		insereMarca();
+	if(ok){
+        insereMarca(getMarcacoes);
+    }
 	$(".nova-marcacao").addClass("esconde");
 }
 
-function insereMarca(){
+function insereMarca(callback){
 	console.log($("#horario_nova_marca").val());
 	now = new Date();
-	html5rocks.webdb.insertMarca({user:currentSettings.username,dataHora:new Date((now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + " " +$("#horario_nova_marca").val()).getTime()});
+	html5rocks.webdb.insertMarca({user:currentSettings.username,dataHora:new Date((now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + " " +$("#horario_nova_marca").val()).getTime()},callback);
 }
 
-function carregaMarcacoes(list){
-    list.sort(function(a,b){
-        return ((a.hora*60)+a.minuto)-((b.hora*60)+b.minuto)}
-    );
-    marcacoesDia = list;
-    $(".marcacoes tbody").empty();
-    for(var i =0;i<list.length;i++){
-        $(".marcacoes tbody").append("<tr><td>"+list[i].dia+"/"+list[i].mes+"/"+list[i].ano+" - "+zeroEsquerda(list[i].hora,2)+":"+zeroEsquerda(list[i].minuto,2));
-    }
 
-}
 function atualizaInformacoes(){
     sendMessage({type:"co", method:"getInformacoesPonto",param:[currentPonto.selecionado] },function(promise){
         setTimeout(function(){
@@ -130,17 +124,6 @@ function atualizaInformacoes(){
             },500)
     });
     });
-    /*sendMessage({type:"db", method:"getPromise",param:[promise]},function(ponto){
-        currentPonto.info = ponto;
-        carregaMarcacoes(currentPonto.info.marcacoesDia);
-    });
-
-	horasFaltantes = convertSecondsToHours(segundosFaltantes);
-	var segundosSaida = convertHoursToSeconds(now) + segundosFaltantes + (marcacoesDia.length<3?convertHoursToSeconds(tempoAlmoco):0);
-	horarioSaida = convertSecondsToHours(segundosSaida > 86400?segundosSaida-86400:segundosSaida);
-	horasTrabalhadas = convertSecondsToHours(segundosTrabalhados);
-	horaExtra = segundosFaltantes > 0;
-	horaExtra2 = (convertHoursToSeconds(now) + segundosFaltantes) > 0;*/
 }
 
 
@@ -154,21 +137,4 @@ function makeXmlLogin() {
 }
 function makeXmlDate(date) {
 	return "<day>" + date.getDate() + "</day><month>" + (date.getMonth()+1) + "</month><year>" + date.getFullYear() + "</year>";
-}
-function showNotificationEx(){
-	showNotification({type:"notification", title: "NOTIFICATION", message: "Exemplo"}, function(response) {
-	  console.log(response);
-	});
-}
-function showNotificationMarcacoes(){
-	showNotification({type:"message",messageType:"showMarcacoes",user: currentSettings.username, data: (new Date()).getTime()}, function(response) {
-	  console.log(response);
-	});
-}
-
-function showNotification(request, callback){
-	sendMessage(request, callback);
-}
-function sendMessage(request, callback){
-    chrome.runtime.sendMessage(chrome.app.getDetails().id,request, callback);
 }
