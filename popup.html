@@ -1,23 +1,19 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <script id="jquery_script" type="text/javascript" src="js/jquery-1.9.1.js"></script>
         <link href="css/style.css" rel="stylesheet" type="text/css" />
+
+        <script id="jquery_script" type="text/javascript" src="js/jquery-1.9.1.js"></script>
+        <script type="text/javascript" src="js/messageSender.js"></script>
         <script type="text/javascript" src="js/webDB-remote.js"></script>
-    <!---->
         <script type="text/javascript" src="js/settings.js"></script>
-    <!---->
         <script type="text/javascript" src="js/util.js"></script>
         <script type="text/javascript" src="js/ponto.js"></script>
         <script type="text/javascript" src="js/segment-display.js"></script>
-        <script type="text/javascript" src="js/segment-display-ponto.js"></script>
+        <script type="text/javascript" src="js/view-display-ponto.js"></script>
         <script type="text/javascript" src="js/marcacoes-popup.js"></script>
-    <!---->
-        <script type="text/javascript" src="js/segment-display.js"></script>
-        <script type="text/javascript" src="js/segment-display-ponto.js"></script>
+        <script type="text/javascript" src="js/notification-remote.js"></script>
 
-
-        <!--<script src="http://code.jquery.com/jquery-latest.min.js"></script>-->
         <style type="text/css">
             .topic {
               /*margin-bottom: 1.5em; */
@@ -55,13 +51,13 @@
 
     </head>
     <body dir="ltr" scroll="no" unselectable="on">
-		<div class="content">
+		<div class="content" id="view_display_ponto">
 		  <div class="topic" style="background-color: rgb(36, 30, 30); border: 3px solid #999; width: 300px; height: 188px;">
 			<div style="padding-left:20px">
-			  <canvas id="display" width="260" height="90"></canvas>
+			  <canvas id="display" class="display1" width="260" height="90"></canvas>
 			</div>
 			<div style="padding-left:20px">
-			  <canvas id="display2" width="260" height="90"></canvas>
+			  <canvas id="display2" class="display2" width="260" height="90"></canvas>
 			</div>
 		  </div>
 		  <div class="topic" style="background-color: rgb(36, 30, 30); border: 3px solid #999; width: 280px; padding:10px;">

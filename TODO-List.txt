@@ -5,3 +5,7 @@
 - Adicionar Relógios
 - Adicionar tempo entre marcações
 - Diagramar
+- Ajustar GetConfiguracoes para chamado de webservice de acordo com que foi configurado.
+- Exibir marcacoes dia
+- Adicionar tipo da marcacao
+- Adicionar Icones informativos
