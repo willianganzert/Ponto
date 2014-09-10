@@ -96,10 +96,10 @@ html5rocks.webdb.insertMarca = function(marca) {
     if(typeof marca.dataHora == "number")
         marca.dataHora = new Date(marca.dataHora);
 	marca.dataHora.setSeconds(0);
-	console.log("INSERINDO");
+//	console.log("INSERINDO");
 	html5rocks.webdb.getMarca({user:marca.user,ano:marca.dataHora.getFullYear(), mes:marca.dataHora.getMonth()+1, dia:marca.dataHora.getDate(), hora:marca.dataHora.getHours(), minuto:marca.dataHora.getMinutes()}, function(list){
 		if(!list || !list.length){
-		  console.log("INSERIR");
+//		  console.log("INSERIR");
 		  var db = html5rocks.webdb.db;
 		  db.transaction(function(tx){
             tx.executeSql("INSERT INTO MARCACOES(user,ano, mes, dia, hora, minuto, obs) VALUES (?,?,?,?,?,?,?)",
@@ -109,7 +109,7 @@ html5rocks.webdb.insertMarca = function(marca) {
 		   });
 		}
 		else{
-			console.log("JÁ INSERIDO");
+//			console.log("JÁ INSERIDO");
 		}
    })
 }

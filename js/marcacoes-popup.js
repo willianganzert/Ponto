@@ -41,7 +41,7 @@ $(function(){
 //            setInterval(function(){typeof animate == 'function'?animate():null;},1000);
         }
         else{
-            console.log("SEM CONFIGURACOES");
+//            console.log("SEM CONFIGURACOES");
             currentSettings.view.requestSettings();
         }
     });
@@ -109,7 +109,7 @@ function fechaNovaMarca(ok){
 }
 
 function insereMarca(callback){
-	console.log($("#horario_nova_marca").val());
+//	console.log($("#horario_nova_marca").val());
 	now = new Date();
 	html5rocks.webdb.insertMarca({user:currentSettings.username,dataHora:new Date((now.getMonth()+1) + "/" + now.getDate() + "/" + now.getFullYear() + " " +$("#horario_nova_marca").val()).getTime()},callback);
 }
@@ -119,7 +119,7 @@ function atualizaInformacoes(){
     sendMessage({type:"co", method:"getInformacoesPonto",param:[currentPonto.selecionado] },function(promise){
         setTimeout(function(){
             sendMessage({type:"co", method:"getPromise",param:[promise]},function(a){
-                console.log(a);
+//                console.log(a);
                 currentPonto.showDia(a);
             },500)
     });
