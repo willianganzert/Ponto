@@ -88,7 +88,7 @@ function consultaPonto() {
         fakeRequestPonto();
     }
     else{
-        requestPontoWS
+        requestPontoWS();
     }
 }
 function requestPontoWS() {
@@ -164,7 +164,7 @@ function calculaHorarios(){
 	}
 	
 	var segundosFaltantes = segundosDiarios - segundosTrabalhados;
-    if(segundosFaltantes < 300){
+    if(segundosFaltantes < 300 && segundosFaltantes > 5){
         var dia = now.getDate()+"-"+now.getMonth()+"-"+now.getFullYear();
         if(!notificadoHoraSaida[dia] || !notificadoHoraSaida[dia].notificado){
             currentSchedule.addEvent(new EventSchedule("notificaHoraSaida",{trigger:function(){return true},message:{title:"HORARIO DE SAÍDA", message: "Faltam menos de 5 minutos para registrar seu ponto, organize-se!"}}))
