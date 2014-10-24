@@ -1,6 +1,4 @@
 var redirects = [];
-//redirects[0] = {from:"https://sonata:1818/ConsultaPontoWS/ConsultaPonto?wsdl",isActive:true,to:"https://sonata.interno.senior.com.br:1818/ConsultaPontoWS/ConsultaPonto?wsdl"};
-redirects[0] = {startWith:true, from:"http://sonata:8585/",isActive:true,to:"https://sonata.interno.senior.com.br:1818/"};
 /*
  chrome.webRequest.onBeforeRequest.addListener(function(details) {
  return redirectToMatchingRule(details);
