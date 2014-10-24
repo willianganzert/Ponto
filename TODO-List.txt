@@ -1,4 +1,4 @@
-- Unificar DB - OK
+﻿- Unificar DB - OK
 - Adicionar Alertas - Funcionamento de Alertas já esta previamente configurado agora é necessario utilizar a funcionalidade
 	- Alertas de clt
 	- Configurar alertas
