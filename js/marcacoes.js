@@ -1,4 +1,4 @@
-﻿var dbug = true;
+﻿var dbug = false;
 var horasdiarias = "08:30:00";
 var horasFaltantes = horasdiarias;
 var horarioSaida = "18:00:00";
@@ -200,10 +200,14 @@ function calculaHorarios(){
 	*/
 	
 }
-
+function reloadSettings(){
+	currentSettings.load();
+}
 
 function processError(data, status, req) {
 		$("#results").text(status + ": " + req);
+		console.log(data+" - "+status+" - "+req)
+		currentSettings.load();
 }
 function makeXmlLogin() {
 	var xml = "<login><username>" + currentSettings.username + "</username><password>" + currentSettings.password + "</password></login>";

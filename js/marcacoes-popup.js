@@ -89,6 +89,9 @@ function abreConfiguracao(){
 }
 function fechaConfiguracao(ok){
     currentSettings.configurando = false;
+	
+	reloadSettings();
+	
 	if(ok)
 		currentSettings.save(function(){window.location.reload();});
 	$(".configuracoes").addClass("esconde");
@@ -101,7 +104,7 @@ function abreNovaMarca(){
 	$('#horario_nova_marca').focus();
 }
 function fechaNovaMarca(ok){
-    currentSettings.inserindoMarca = false;
+    currentSettings.inserindoMarca = false;	
 	if(ok){
         insereMarca(getMarcacoes);
     }
@@ -127,7 +130,9 @@ function atualizaInformacoes(){
 }
 
 
-
+function reloadSettings(){
+	sendMessage({type:"function", method:"reloadSettings",param:[] },function(){});
+}
 function processError(data, status, req) {
 		$("#results").text(status + ": " + req);
 }
