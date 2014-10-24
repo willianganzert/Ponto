@@ -4,7 +4,7 @@
   "manifest_version": 3,
   "description": "Ferramenta para agilizar a consulta do ponto.",
   "browser_action": {
-    "default_icon": "img/senior_ponto.png",
+    "default_icon": "img/icon_ponto.png",
 	"default_popup": "popup.html"        // optional  
   },
   "background": { "page": "background.html" },
@@ -16,6 +16,7 @@
   "web_accessible_resources": [
     "img/icon_48.png"
   ],
+  "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "update_url":"http://localhost:8080/HostExtension/PontoUpdate",
   "permissions": [
 	"background",
